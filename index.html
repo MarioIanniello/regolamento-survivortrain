@@ -337,5 +337,152 @@
       </footer>
     </section>
   </main>
+  <script>
+    // 1) Incolla qui l’URL CSV pubblicato dal tuo Google Sheet.
+    // Esempio formato:
+    // https://docs.google.com/spreadsheets/d/e/XXXXXXX/pub?gid=0&single=true&output=csv
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQv_fr_5DZIalplAaWqN2KM5FBHIpClJvj5um0DN4mp7NunrKAkckAtX1w6SSMwORSz9xujVHx2a5TY/pub?gid=0&single=true&output=csv";
+
+    const REFRESH_MS = 60_000;
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatPoints(v) {
+      const n = Number(String(v).replace(",", "."));
+      if (Number.isNaN(n)) return "0";
+      const oneDec = Math.round(n * 10) / 10;
+      return String(oneDec).replace(".", ",");
+    }
+
+    function parseCSV(text) {
+      // CSV parser robusto per campi con virgole/virgolette
+      const rows = [];
+      let row = [];
+      let cur = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        const next = text[i + 1];
+
+        if (inQuotes) {
+          if (ch === '"' && next === '"') {
+            cur += '"';
+            i++;
+          } else if (ch === '"') {
+            inQuotes = false;
+          } else {
+            cur += ch;
+          }
+        } else {
+          if (ch === '"') {
+            inQuotes = true;
+          } else if (ch === ',') {
+            row.push(cur);
+            cur = "";
+          } else if (ch === '\n') {
+            row.push(cur);
+            rows.push(row);
+            row = [];
+            cur = "";
+          } else if (ch === '\r') {
+            // ignore
+          } else {
+            cur += ch;
+          }
+        }
+      }
+      // last cell
+      row.push(cur);
+      rows.push(row);
+      return rows.filter(r => r.some(cell => String(cell).trim() !== ""));
+    }
+
+    function buildFromRows(csvRows) {
+      // Intestazioni attese: team, lives, points (accettiamo varianti IT)
+      const header = (csvRows[0] || []).map(h => String(h).trim().toLowerCase());
+      const teamIdx = header.findIndex(h => ["team", "squadra", "nome squadra", "nome_squadra"].includes(h));
+      const livesIdx = header.findIndex(h => ["lives", "vite", "vite rimaste", "vite_rimaste"].includes(h));
+      const pointsIdx = header.findIndex(h => ["points", "punti", "punteggio", "punti totali", "punti_totali"].includes(h));
+
+      if (teamIdx === -1 || livesIdx === -1 || pointsIdx === -1) {
+        throw new Error("Header CSV non riconosciuto. Servono colonne: team/squadra, lives/vite, points/punti.");
+      }
+
+      const items = csvRows.slice(1).map(r => ({
+        team: (r[teamIdx] ?? "").toString().trim(),
+        lives: Number(String(r[livesIdx] ?? "0").trim()),
+        points: Number(String(r[pointsIdx] ?? "0").trim().replace(",", "."))
+      })).filter(x => x.team.length > 0);
+
+      // Ordina per punti desc, poi vite desc, poi nome
+      items.sort((a, b) => {
+        const dp = (b.points || 0) - (a.points || 0);
+        if (dp !== 0) return dp;
+        const dl = (b.lives || 0) - (a.lives || 0);
+        if (dl !== 0) return dl;
+        return a.team.localeCompare(b.team, "it");
+      });
+
+      return items;
+    }
+
+    async function loadLeaderboard() {
+      const tbody = document.querySelector("#lb-table tbody");
+      const updatedEl = document.getElementById("lb-updated");
+      const statusEl = document.getElementById("lb-status");
+
+      if (!SHEET_CSV_URL || SHEET_CSV_URL.includes("PASTE_YOUR_PUBLISHED_CSV_URL_HERE")) {
+        updatedEl.textContent = "Imposta URL CSV";
+        tbody.innerHTML = '<tr><td colspan="4">⚠️ Inserisci l’URL CSV pubblicato del Google Sheet nello script (SHEET_CSV_URL).</td></tr>';
+        return;
+      }
+
+      statusEl.textContent = "";
+
+      try {
+        const url = `${SHEET_CSV_URL}${SHEET_CSV_URL.includes("?") ? "&" : "?"}v=${Date.now()}`;
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const text = await res.text();
+
+        const csvRows = parseCSV(text);
+        const items = buildFromRows(csvRows);
+
+        tbody.innerHTML = "";
+        if (items.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4">Nessun dato in classifica.</td></tr>';
+        } else {
+          items.forEach((r, i) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${i + 1}</td>
+              <td>${escapeHtml(r.team)}</td>
+              <td>${Number.isFinite(r.lives) ? r.lives : 0}</td>
+              <td>${formatPoints(r.points)}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+
+        const now = new Date();
+        updatedEl.textContent = now.toLocaleString("it-IT", { dateStyle: "short", timeStyle: "short" });
+      } catch (err) {
+        updatedEl.textContent = "Errore";
+        statusEl.textContent = " — impossibile aggiornare";
+        tbody.innerHTML = `<tr><td colspan="4">❌ Errore caricamento: ${escapeHtml(err.message || err)}</td></tr>`;
+      }
+    }
+
+    loadLeaderboard();
+    setInterval(loadLeaderboard, REFRESH_MS);
+  </script>
 </body>
 </html>
