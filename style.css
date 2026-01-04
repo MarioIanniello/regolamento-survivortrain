@@ -5,6 +5,7 @@
   --nav: rgba(255, 255, 255, 0.90);
   --shadow: rgba(0, 0, 0, 0.10);
   --card: rgba(255, 255, 255, 0.94);
+  --topbar-offset: 96px;
 }
 
 * { box-sizing: border-box; }
@@ -54,12 +55,33 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 14px 18px;
+
+  /* make it feel like a real header bar */
+  margin: 0 -22px 18px;
+  padding: 14px 22px;
   background: var(--nav);
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  border-bottom: 1px solid var(--border);
   backdrop-filter: blur(10px);
-  box-shadow: 0 10px 26px var(--shadow);
+
+  /* keep it clean and readable */
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+/* Ensure anchored headings (Art. X) are visible below the sticky topbar */
+h2[id] {
+  scroll-margin-top: var(--topbar-offset);
+}
+
+/* Optional: subtle highlight when navigating from the index */
+h2[id]:target {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 10px;
+  padding: 6px 10px;
+  margin-left: -10px;
+  margin-right: -10px;
 }
 
 .brand {
@@ -313,4 +335,8 @@ th {
   .toc-list { grid-template-columns: 1fr; gap: 10px; }
   table { min-width: 720px; }
   .btn { width: 100%; }
+  .topbar {
+    margin: 0 -14px 14px;
+    padding: 14px 14px;
+  }
 }
