@@ -1,0 +1,28 @@
+body {
+    font-family: Georgia, serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: 60px auto;
+    background: #fff;
+    padding: 50px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  }
+  
+  h1 {
+    text-align: center;
+  }
+  
+  .versione {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+  }
+  
+  h2 {
+    margin-top: 40px;
+  }
