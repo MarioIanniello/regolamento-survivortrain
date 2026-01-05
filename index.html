@@ -15,7 +15,9 @@
   <header class="topbar" id="site-top">
     <div class="brand">
       <span class="dot" aria-hidden="true">🚆</span>
-      <span>Regolamento Survivor Train</span>
+      <a class="topbtn" href="./" id="nav-regolamento">Regolamento Survivor Train</a>
+      <a class="topbtn" href="?view=andata" id="nav-andata">Classifica Edizione Andata</a>
+      <a class="topbtn" href="?view=ritorno" id="nav-ritorno">Classifica Edizione Ritorno</a>
     </div>
 
     <div class="meta">
@@ -24,7 +26,7 @@
   </header>
 
   <main class="wrap">
-    <section class="section">
+    <section class="section" id="regolamento">
       <h1>📜 Regolamento ufficiale</h1>
       <p>
         Questo regolamento disciplina lo <strong>Skillboll Survivor Train</strong> per la stagione 2025/2026. È il riferimento valido per tutta l’edizione.
@@ -47,33 +49,8 @@
           <li><a href="#art12">Art. 12 — Spirito del gioco</a></li>
           <li><a href="#art13">Art. 13 — Comunicazioni ufficiali</a></li>
           <li><a href="#art14">Art. 14 — Amministrazione e Referee</a></li>
-          <li><a href="#classifica">🏁 Classifica ufficiale (live)</a></li>
         </ol>
       </div>
-
-      <h2 id="classifica">🏁 Classifica ufficiale (live)</h2>
-      <p class="note">
-        Aggiornata: <span id="lb-updated">—</span>
-        <span class="lb-status" id="lb-status" aria-live="polite"></span>
-      </p>
-
-      <div class="table-wrap" role="region" aria-label="Classifica ufficiale" tabindex="0">
-        <table id="lb-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Squadra</th>
-              <th>Vite</th>
-              <th>Punti</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="4">Caricamento…</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <p class="note">💡 La classifica si aggiorna automaticamente ogni 60 secondi.</p>
 
       <hr class="sep" />
 
@@ -361,12 +338,73 @@
         <span>© 2025–2026 Survivor Train</span>
       </footer>
     </section>
+
+    <section class="section" id="classifica-page">
+      <h1 id="classifica-title">🏁 Classifica ufficiale</h1>
+      <p class="note">
+        Aggiornata: <span id="lb-updated">—</span>
+        <span class="lb-status" id="lb-status" aria-live="polite"></span>
+      </p>
+
+      <div class="table-wrap" role="region" aria-label="Classifica ufficiale" tabindex="0">
+        <table id="lb-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Squadra</th>
+              <th>Vite</th>
+              <th>Punti</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="4">Caricamento…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="note">💡 La classifica si aggiorna automaticamente ogni 60 secondi.</p>
+
+      <div class="btn-row">
+        <a class="btn" href="./" id="back-regolamento">Torna al regolamento</a>
+      </div>
+
+      <footer class="footer">
+        <span>© 2025–2026 Survivor Train</span>
+      </footer>
+    </section>
   </main>
   <script>
-    // 1) Incolla qui l’URL CSV pubblicato dal tuo Google Sheet.
-    // Esempio formato:
-    // https://docs.google.com/spreadsheets/d/e/XXXXXXX/pub?gid=0&single=true&output=csv
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQv_fr_5DZIalplAaWqN2KM5FBHIpClJvj5um0DN4mp7NunrKAkckAtX1w6SSMwORSz9xujVHx2a5TY/pub?gid=0&single=true&output=csv";
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const view = (params.get("view") || "").toLowerCase();
+      const isAndata = view === "andata";
+      const isRitorno = view === "ritorno";
+      const isClassifica = isAndata || isRitorno;
+
+      document.body.classList.toggle("view-classifica", isClassifica);
+
+      // Active state on topbar buttons
+      const btnReg = document.getElementById("nav-regolamento");
+      const btnAnd = document.getElementById("nav-andata");
+      const btnRit = document.getElementById("nav-ritorno");
+      if (btnReg) btnReg.classList.toggle("is-active", !isClassifica);
+      if (btnAnd) btnAnd.classList.toggle("is-active", isAndata);
+      if (btnRit) btnRit.classList.toggle("is-active", isRitorno);
+
+      // Update title for dedicated view
+      const h1 = document.getElementById("classifica-title");
+      if (isAndata) {
+        document.title = "Classifica Andata — Skillboll Survivor Train";
+        if (h1) h1.textContent = "🏁 Classifica Edizione Andata";
+      } else if (isRitorno) {
+        document.title = "Classifica Ritorno — Skillboll Survivor Train";
+        if (h1) h1.textContent = "🏁 Classifica Edizione Ritorno";
+      }
+    })();
+  </script>
+  <script>
+    const SHEET_CSV_URL_ANDATA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQv_fr_5DZIalplAaWqN2KM5FBHIpClJvj5um0DN4mp7NunrKAkckAtX1w6SSMwORSz9xujVHx2a5TY/pub?gid=0&single=true&output=csv";
+    const SHEET_CSV_URL_RITORNO = "PASTE_RITORNO_CSV_URL_HERE";
 
     const REFRESH_MS = 60_000;
 
@@ -464,16 +502,23 @@
       const updatedEl = document.getElementById("lb-updated");
       const statusEl = document.getElementById("lb-status");
 
-      if (!SHEET_CSV_URL || SHEET_CSV_URL.includes("PASTE_YOUR_PUBLISHED_CSV_URL_HERE")) {
+      const params = new URLSearchParams(window.location.search);
+      const view = (params.get("view") || "").toLowerCase();
+      const isAndata = view === "andata";
+      const isRitorno = view === "ritorno";
+
+      const activeUrl = isRitorno ? SHEET_CSV_URL_RITORNO : SHEET_CSV_URL_ANDATA;
+
+      if (!activeUrl || activeUrl.includes("PASTE_RITORNO_CSV_URL_HERE") || activeUrl.includes("PASTE_YOUR_PUBLISHED_CSV_URL_HERE")) {
         updatedEl.textContent = "Imposta URL CSV";
-        tbody.innerHTML = '<tr><td colspan="4">⚠️ Inserisci l’URL CSV pubblicato del Google Sheet nello script (SHEET_CSV_URL).</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4">⚠️ Inserisci l’URL CSV pubblicato del Google Sheet nello script (SHEET_CSV_URL_ANDATA / SHEET_CSV_URL_RITORNO).</td></tr>';
         return;
       }
 
       statusEl.textContent = "";
 
       try {
-        const url = `${SHEET_CSV_URL}${SHEET_CSV_URL.includes("?") ? "&" : "?"}v=${Date.now()}`;
+        const url = `${activeUrl}${activeUrl.includes("?") ? "&" : "?"}v=${Date.now()}`;
         const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const text = await res.text();
