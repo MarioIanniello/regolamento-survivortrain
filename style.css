@@ -295,7 +295,7 @@ summary::-webkit-details-marker { display: none; }
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 760px;
+  table-layout: fixed;
 }
 
 th, td {
@@ -303,6 +303,9 @@ th, td {
   padding: 14px 14px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.10);
   vertical-align: top;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 th {
@@ -365,19 +368,78 @@ th {
 }
 
 @media (max-width: 600px) {
-  .topbtn {
-    margin-left: 0;
-    padding: 8px 10px;
-    font-size: 13px;
-    white-space: normal;
-  }
   .wrap { padding: 18px 14px 56px; }
   .section { padding: 26px 20px; }
   .toc-list { grid-template-columns: 1fr; gap: 10px; }
-  table { min-width: 720px; }
   .btn { width: 100%; }
+
+  /* Topbar layout on mobile */
   .topbar {
     margin: 0 -14px 14px;
-    padding: 14px 14px;
+    padding: 12px 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .brand {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .meta {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  /* Nav buttons: first full width, next two half width */
+  .brand .topbtn {
+    margin-left: 0;
+    padding: 10px 10px;
+    font-size: 13px;
+    white-space: normal;
+    text-align: center;
+    flex: 1 1 auto;
+    border-radius: 14px;
+  }
+
+  .brand .topbtn#nav-regolamento {
+    flex: 1 1 100%;
+  }
+
+  .brand .topbtn#nav-andata,
+  .brand .topbtn#nav-ritorno {
+    flex: 1 1 calc(50% - 8px);
+  }
+
+  /* Table: fit screen (no horizontal scroll) */
+  .table-wrap {
+    overflow-x: hidden;
+  }
+
+  .table-wrap table th,
+  .table-wrap table td {
+    padding: 10px 10px;
+    font-size: 14px;
+  }
+
+  /* Leaderboard columns sizing */
+  #lb-table th:nth-child(1),
+  #lb-table td:nth-child(1) { width: 12%; text-align: center; }
+
+  #lb-table th:nth-child(2),
+  #lb-table td:nth-child(2) { width: 44%; }
+
+  #lb-table th:nth-child(3),
+  #lb-table td:nth-child(3) { width: 18%; text-align: center; }
+
+  #lb-table th:nth-child(4),
+  #lb-table td:nth-child(4) { width: 26%; text-align: center; }
+
+  /* Classifica title a misura iPhone */
+  #classifica-page h1 {
+    font-size: 34px;
+    line-height: 1.1;
   }
 }
