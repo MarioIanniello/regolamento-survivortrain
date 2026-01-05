@@ -232,15 +232,22 @@ h3 {
 }
 
 .bullets li {
-  display: grid;
-  grid-template-columns: 28px 1fr;
-  column-gap: 10px;
+  display: flex;
   align-items: flex-start;
+  gap: 12px;
 }
 
 .bullets .icon {
-  width: 22px;
+  flex: 0 0 24px;
+  width: 24px;
   opacity: 0.9;
+  line-height: 1.2;
+}
+
+/* allow the text column to shrink properly on iOS */
+.bullets li > :last-child {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .ordered {
@@ -486,14 +493,21 @@ th {
     line-height: 1.1;
   }
 
-  /* Mobile: bullet list readability */
+  /* Mobile: bullet list readability (fix iOS overlap) */
   .bullets li {
-    grid-template-columns: 24px 1fr;
-    column-gap: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
   }
 
-  /* Keep ordinal+word together (e.g., “1ª giornata”, “21ª giornata”) */
+  .bullets .icon {
+    flex: 0 0 24px;
+    width: 24px;
+  }
+
+  /* Keep “1ª giornata di Serie A” on one line without overlapping */
   .bullets li strong {
     white-space: nowrap;
+    font-size: 0.98em;
   }
 }
