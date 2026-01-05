@@ -70,6 +70,7 @@ body {
   border-radius: 0;
   box-shadow: none;
 }
+
 /* Ensure anchored headings (Art. X) are visible below the sticky topbar */
 h2[id] {
   scroll-margin-top: var(--topbar-offset);
@@ -136,7 +137,6 @@ h2[id]:target {
 .dot {
   opacity: 0.6;
 }
-
 
 /* main card */
 .section {
@@ -270,7 +270,6 @@ summary {
 
 summary::-webkit-details-marker { display: none; }
 
-
 .note {
   font-size: 14px;
   opacity: 0.95;
@@ -325,6 +324,13 @@ th {
   opacity: 0.85;
 }
 
+/* Prize stack (Divisione premi) */
+.prize-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 /* buttons */
 .btn-row {
   display: flex;
@@ -363,7 +369,6 @@ th {
   color: rgba(17, 24, 39, 0.60);
 }
 
-
 /* Dedicated view toggling (Regolamento vs Classifica) */
 #classifica-page { display: none; }
 
@@ -383,7 +388,7 @@ th {
   .toc-list { grid-template-columns: 1fr; gap: 10px; }
   .btn { width: 100%; }
 
-  /* Topbar layout and transition on mobile (merged) */
+  /* Topbar layout and transition on mobile */
   .topbar {
     margin: 0 -14px 14px;
     padding: 12px 14px;
@@ -402,7 +407,6 @@ th {
     width: 100%;
     gap: 8px;
   }
-
 
   /* Nav buttons: first full width, next two half width */
   .brand .topbtn {
@@ -440,6 +444,29 @@ th {
     font-size: 14px;
   }
 
+  /* Mobile: compact table headers (no wrap for PACCHETTO) */
+  th {
+    font-size: 12px;
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+
+  /* Make prize stacks tighter on mobile and avoid messy wrapping */
+  .table-prizes td {
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .table-prizes th {
+    overflow-wrap: normal;
+    word-break: keep-all;
+    hyphens: auto;
+  }
+
+  .prize-stack {
+    gap: 4px;
+  }
+
   /* Leaderboard columns sizing */
   #lb-table th:nth-child(1),
   #lb-table td:nth-child(1) { width: 12%; text-align: center; }
@@ -457,5 +484,16 @@ th {
   #classifica-page h1 {
     font-size: 34px;
     line-height: 1.1;
+  }
+
+  /* Mobile: bullet list readability */
+  .bullets li {
+    grid-template-columns: 24px 1fr;
+    column-gap: 10px;
+  }
+
+  /* Keep ordinal+word together (e.g., “1ª giornata”, “21ª giornata”) */
+  .bullets li strong {
+    white-space: nowrap;
   }
 }
