@@ -337,7 +337,7 @@
 
     <section class="section" id="classifica-page">
       <h1 id="classifica-title">🏁 Classifica ufficiale</h1>
-      <p class="note">
+      <p class="note sr-only" aria-hidden="true">
         Aggiornata: <span id="lb-updated">—</span>
         <span class="lb-status" id="lb-status" aria-live="polite"></span>
       </p>
@@ -358,7 +358,7 @@
         </table>
       </div>
 
-      <p class="note">💡 La classifica si aggiorna automaticamente ogni 60 secondi.</p>
+      <p class="note">Le squadre contrassegnate con le ❌ non hanno diritto a riacquistare nuove vite.</p>
 
       <div class="btn-row">
         <a class="btn" href="./" id="back-regolamento">Torna al regolamento</a>
@@ -549,6 +549,53 @@
 
     loadLeaderboard();
     setInterval(loadLeaderboard, REFRESH_MS);
+  </script>
+  <script>
+    (function () {
+      const topbar = document.querySelector('.topbar');
+      if (!topbar) return;
+
+      let lastY = window.scrollY || 0;
+      let ticking = false;
+
+      function isMobile() {
+        return window.matchMedia('(max-width: 600px)').matches;
+      }
+
+      function update() {
+        ticking = false;
+        if (!isMobile()) {
+          topbar.classList.remove('topbar-hidden');
+          lastY = window.scrollY || 0;
+          return;
+        }
+
+        const y = window.scrollY || 0;
+        const goingDown = y > lastY;
+
+        // Hide only after a small offset so it doesn't flicker near the top
+        if (goingDown && y > 80) {
+          topbar.classList.add('topbar-hidden');
+        } else {
+          topbar.classList.remove('topbar-hidden');
+        }
+
+        lastY = y;
+      }
+
+      function onScroll() {
+        if (!ticking) {
+          ticking = true;
+          window.requestAnimationFrame(update);
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+
+      // initial
+      update();
+    })();
   </script>
 </body>
 </html>
