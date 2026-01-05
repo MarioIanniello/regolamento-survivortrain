@@ -507,7 +507,7 @@
 
       if (!activeUrl || activeUrl.includes("PASTE_RITORNO_CSV_URL_HERE") || activeUrl.includes("PASTE_YOUR_PUBLISHED_CSV_URL_HERE")) {
         updatedEl.textContent = "Imposta URL CSV";
-        tbody.innerHTML = '<tr><td colspan="4">⚠️ Inserisci l’URL CSV pubblicato del Google Sheet nello script (SHEET_CSV_URL_ANDATA / SHEET_CSV_URL_RITORNO).</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4"></td></tr>';
         return;
       }
 
