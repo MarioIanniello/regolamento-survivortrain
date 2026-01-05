@@ -270,12 +270,26 @@ summary {
 
 summary::-webkit-details-marker { display: none; }
 
+
 .note {
   font-size: 14px;
   opacity: 0.95;
   margin: 12px 0 0;
   color: rgba(17, 24, 39, 0.74);
   line-height: 1.6;
+}
+
+/* Visually hidden (keeps elements in DOM for JS) */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 /* tables */
@@ -369,17 +383,13 @@ th {
   .toc-list { grid-template-columns: 1fr; gap: 10px; }
   .btn { width: 100%; }
 
-  /* Topbar layout on mobile */
+  /* Topbar layout and transition on mobile (merged) */
   .topbar {
     margin: 0 -14px 14px;
     padding: 12px 14px;
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
-  }
-
-  /* Mobile: hide/show topbar on scroll */
-  .topbar {
     transition: transform 0.28s ease;
     will-change: transform;
   }
