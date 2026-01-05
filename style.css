@@ -88,11 +88,11 @@ h2[id]:target {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
   font-weight: 900;
   letter-spacing: -0.2px;
 }
 
-/* Topbar button: Classifica */
 .topbtn {
   margin-left: 12px;
   padding: 8px 12px;
@@ -103,10 +103,21 @@ h2[id]:target {
   font-weight: 800;
   text-decoration: none;
   line-height: 1;
+  font-size: 14px;
+  white-space: nowrap;
 }
 
 .topbtn:hover {
   background: rgba(0, 0, 0, 0.06);
+}
+
+.topbtn.is-active {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.18);
+}
+
+.brand .topbtn:first-of-type {
+  margin-left: 0;
 }
 
 .dot {
@@ -355,8 +366,10 @@ th {
 
 @media (max-width: 600px) {
   .topbtn {
-    margin-left: 10px;
+    margin-left: 0;
     padding: 8px 10px;
+    font-size: 13px;
+    white-space: normal;
   }
   .wrap { padding: 18px 14px 56px; }
   .section { padding: 26px 20px; }
