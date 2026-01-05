@@ -332,10 +332,28 @@ th {
 }
 
 /* Prize stack (Divisione premi) */
+
 .prize-stack {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+/* Prizes table: allow headers to wrap cleanly */
+.table-prizes {
+  table-layout: auto;
+}
+
+.table-prizes th,
+.table-prizes td {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.table-prizes th {
+  white-space: normal;
+  line-height: 1.25;
+  letter-spacing: 0;
 }
 
 /* buttons */
@@ -457,6 +475,27 @@ th {
     white-space: nowrap;
     word-break: keep-all;
   }
+
+  /* Override nowrap headers ONLY for the prizes table */
+  .table-prizes th {
+    white-space: normal;
+    font-size: 11px;
+    line-height: 1.2;
+    padding: 10px 8px;
+  }
+
+  .table-prizes td {
+    padding: 12px 10px;
+  }
+
+  .table-prizes th:nth-child(1),
+  .table-prizes td:nth-child(1) { width: 32%; }
+
+  .table-prizes th:nth-child(2),
+  .table-prizes td:nth-child(2) { width: 28%; }
+
+  .table-prizes th:nth-child(3),
+  .table-prizes td:nth-child(3) { width: 40%; }
 
   /* Make prize stacks tighter on mobile and avoid messy wrapping */
   .table-prizes td {
