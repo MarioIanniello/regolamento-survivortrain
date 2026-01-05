@@ -378,6 +378,16 @@ th {
     gap: 10px;
   }
 
+  /* Mobile: hide/show topbar on scroll */
+  .topbar {
+    transition: transform 0.28s ease;
+    will-change: transform;
+  }
+
+  .topbar.topbar-hidden {
+    transform: translateY(-110%);
+  }
+
   .brand {
     width: 100%;
     gap: 8px;
