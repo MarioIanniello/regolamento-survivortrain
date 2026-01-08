@@ -147,7 +147,7 @@
         <span class="kbd">[Nome squadra] – Iscrizione Survivor Train</span>
         oppure
         <span class="kbd">[Nome squadra] – N° Vite</span><br>
-        Link: <span class="kbd">https://www.paypal.me/SurvivorTrain</span>
+        Link: <a class="link" href="https://www.paypal.me/SurvivorTrain" target="_blank" rel="noopener noreferrer">https://www.paypal.me/SurvivorTrain</a>
       </p>
 
       <!-- ART. 5 -->
@@ -517,11 +517,19 @@
         throw new Error("Header CSV non riconosciuto. Servono colonne: team/squadra, lives/vite, points/punti.");
       }
 
-      const items = csvRows.slice(1).map(r => ({
-        team: (r[teamIdx] ?? "").toString().trim(),
-        lives: Number(String(r[livesIdx] ?? "0").trim()),
-        points: Number(String(r[pointsIdx] ?? "0").trim().replace(",", "."))
-      })).filter(x => x.team.length > 0);
+      const items = csvRows.slice(1).map(r => {
+        const rawTeam = (r[teamIdx] ?? "").toString().trim();
+        const noRebuy = rawTeam.includes("❌");
+        // Remove any ❌ from the displayed team name
+        const cleanTeam = rawTeam.replaceAll("❌", "").trim();
+
+        return {
+          team: cleanTeam,
+          noRebuy,
+          lives: Number(String(r[livesIdx] ?? "0").trim()),
+          points: Number(String(r[pointsIdx] ?? "0").trim().replace(",", "."))
+        };
+      }).filter(x => x.team.length > 0);
 
       // Ordina per punti desc, poi vite desc, poi nome
       items.sort((a, b) => {
@@ -571,7 +579,7 @@
           items.forEach((r, i) => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
-              <td>${i + 1}</td>
+              <td class="rank-cell">${i + 1}${r.noRebuy ? '<span class="no-rebuy" aria-label="Nessun riacquisto">❌</span>' : ''}</td>
               <td>${escapeHtml(r.team)}</td>
               <td>${Number.isFinite(r.lives) ? r.lives : 0}</td>
               <td>${formatPoints(r.points)}</td>
