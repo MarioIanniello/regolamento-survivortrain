@@ -413,6 +413,20 @@ th {
   text-align: center;
 }
 
+/* Leaderboard: rank cell with optional ❌ */
+#lb-table td.rank-cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+#lb-table td.rank-cell .no-rebuy {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 16px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
 @media (max-width: 600px) {
   .wrap { padding: 18px 14px 56px; }
   .section { padding: 26px 20px; }
@@ -531,6 +545,12 @@ th {
 
   #lb-table th:nth-child(4),
   #lb-table td:nth-child(4) { width: 26%; text-align: center; }
+
+  /* Mobile: keep rank + ❌ compact */
+  #lb-table td.rank-cell .no-rebuy {
+    margin-left: 4px;
+    font-size: 15px;
+  }
 
   /* Classifica title a misura iPhone */
   #classifica-page h1 {
