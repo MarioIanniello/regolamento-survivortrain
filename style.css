@@ -407,6 +407,12 @@ th {
   max-width: 880px;
 }
 
+/* Leaderboard: center VITE UTILIZZATE column (all screens) */
+#lb-table th:nth-child(3),
+#lb-table td:nth-child(3) {
+  text-align: center;
+}
+
 @media (max-width: 600px) {
   .wrap { padding: 18px 14px 56px; }
   .section { padding: 26px 20px; }
