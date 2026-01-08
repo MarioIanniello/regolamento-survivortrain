@@ -546,6 +546,20 @@ th {
   #lb-table th:nth-child(4),
   #lb-table td:nth-child(4) { width: 26%; text-align: center; }
 
+  /* Mobile: prevent header overlap (allow wrapping on long labels) */
+  #lb-table th {
+    white-space: normal;      /* override global mobile th nowrap */
+    word-break: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.15;
+  }
+
+  #lb-table th:nth-child(3),
+  #lb-table th:nth-child(4) {
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+
   /* Mobile: keep rank + ❌ compact */
   #lb-table td.rank-cell .no-rebuy {
     margin-left: 4px;
