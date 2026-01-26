@@ -523,14 +523,22 @@
 
       const items = csvRows.slice(1).map(r => {
         const rawTeam = (r[teamIdx] ?? "").toString().trim();
-        const noRebuy = rawTeam.includes("❌");
-        // Remove any ❌ from the displayed team name
+        const rawLives = (r[livesIdx] ?? "0").toString().trim();
+
+        // ❌ can be stored either in the Team cell OR in the Lives cell (e.g. "1❌")
+        const noRebuy = rawTeam.includes("❌") || rawLives.includes("❌");
+
+        // Clean display values
         const cleanTeam = rawTeam.replaceAll("❌", "").trim();
+
+        // Keep lives numeric even if the cell contains "❌" or other symbols
+        const livesStr = rawLives.replaceAll("❌", "").trim();
+        const livesNum = Number(String(livesStr).replace(/[^0-9.-]/g, ""));
 
         return {
           team: cleanTeam,
           noRebuy,
-          lives: Number(String(r[livesIdx] ?? "0").trim()),
+          lives: Number.isFinite(livesNum) ? livesNum : 0,
           points: Number(String(r[pointsIdx] ?? "0").trim().replace(",", "."))
         };
       }).filter(x => x.team.length > 0);
@@ -583,8 +591,8 @@
           items.forEach((r, i) => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
-              <td class="rank-cell">${i + 1}${r.noRebuy ? '<span class="no-rebuy" aria-label="Nessun riacquisto">❌</span>' : ''}</td>
-              <td>${escapeHtml(r.team)}</td>
+              <td class="rank-cell">${i + 1}</td>
+              <td>${escapeHtml(r.team)}${r.noRebuy ? ' <span class="no-rebuy" aria-label="Nessun riacquisto">❌</span>' : ''}</td>
               <td>${Number.isFinite(r.lives) ? r.lives : 0}</td>
               <td>${formatPoints(r.points)}</td>
             `;
